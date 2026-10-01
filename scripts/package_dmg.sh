@@ -13,15 +13,23 @@ EXPECTED_TEAM_ID="${SLOUCH_GOBLIN_TEAM_ID:-4VS9K4RWP9}"
 # The disk image needs its own signature, separate from the app inside it.
 SIGN_IDENTITY="${SLOUCH_GOBLIN_SIGN_IDENTITY:-Developer ID Application: August Russell Comstock (4VS9K4RWP9)}"
 
+# --personal packages a build signed with a self-signed (or ad-hoc) identity
+# for the owner's own Macs while the Developer Program membership is lapsed.
+# It skips the Developer ID, notarization, and disk image signing steps that
+# need Apple's services; the app signature is still verified so the image
+# never carries a bundle macOS would call "damaged". macOS asks once per
+# version to "Open Anyway" in System Settings > Privacy & Security.
 skip_notarize=0
+personal=0
 app_path=""
 for arg in "$@"; do
   case "$arg" in
     --skip-notarize) skip_notarize=1 ;;
+    --personal) personal=1; skip_notarize=1 ;;
     *) app_path="$arg" ;;
   esac
 done
-app_path="${app_path:-${SLOUCH_GOBLIN_APP:-../hunch/dist/Slouch Goblin.app}}"
+app_path="${app_path:-${SLOUCH_GOBLIN_APP:-../slouch-goblin/dist/Slouch Goblin.app}}"
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
   echo "Disk images must be packaged on macOS." >&2
@@ -60,26 +68,25 @@ signature_info="$(codesign --display --verbose=2 "$app_path" 2>&1 || true)"
 # An ad-hoc bundle cannot be notarized, and every downloader would be told to
 # run a Terminal command to open it. That is not something to ship by accident,
 # so refuse rather than warn.
-if [[ "$signature_info" == *"Signature=adhoc"* ]]; then
+if [[ "$personal" -eq 1 ]]; then
+  echo "Personal build: skipping Developer ID and notarization checks."
+elif [[ "$signature_info" == *"Signature=adhoc"* ]]; then
   echo "Refusing to package an ad-hoc signed bundle." >&2
   echo "Rebuild it with a Developer ID in the source repository:" >&2
   echo "  ./scripts/build_macos_app.sh" >&2
   exit 1
-fi
-
-if [[ "$signature_info" != *"TeamIdentifier=$EXPECTED_TEAM_ID"* ]]; then
+elif [[ "$signature_info" != *"TeamIdentifier=$EXPECTED_TEAM_ID"* ]]; then
   echo "Bundle is not signed by team $EXPECTED_TEAM_ID:" >&2
   echo "$signature_info" | grep -i "TeamIdentifier" >&2 || true
   exit 1
-fi
-
 # Notarization requires the hardened runtime. Apple rejects a bundle without it
 # after the upload, which wastes several minutes; catch it here instead.
-if [[ "$signature_info" != *"(runtime)"* ]]; then
+elif [[ "$signature_info" != *"(runtime)"* ]]; then
   echo "Bundle was signed without the hardened runtime; Apple will reject it." >&2
   exit 1
+else
+  echo "Signature: Developer ID, team $EXPECTED_TEAM_ID, hardened runtime."
 fi
-echo "Signature: Developer ID, team $EXPECTED_TEAM_ID, hardened runtime."
 
 # Notarize and staple the app before it goes into the image, so it keeps
 # opening cleanly after a user drags it out onto a Mac that is offline.
@@ -158,9 +165,13 @@ fi
 # unsigned image gives Gatekeeper "no usable signature" to evaluate no matter
 # how well the app inside it is signed. This must happen before notarization:
 # signing rewrites the file and would invalidate a ticket issued earlier.
-echo "Signing the disk image"
-codesign --force --timestamp --sign "$SIGN_IDENTITY" "$dmg_path"
-codesign --verify --strict "$dmg_path"
+if [[ "$personal" -eq 1 ]]; then
+  echo "Personal build: leaving the disk image unsigned."
+else
+  echo "Signing the disk image"
+  codesign --force --timestamp --sign "$SIGN_IDENTITY" "$dmg_path"
+  codesign --verify --strict "$dmg_path"
+fi
 
 # The disk image is what the user downloads, so it carries the quarantine flag
 # and needs its own ticket. Do this before the checksum: stapling rewrites the
@@ -188,6 +199,8 @@ fi
 echo "Packaged: $dmg_path"
 echo "Checksum: $dmg_path.sha256"
 echo "Version:  $version"
-if [[ "$skip_notarize" -eq 0 ]]; then
+if [[ "$personal" -eq 1 ]]; then
+  echo "Personal build: not notarized. macOS asks once to \"Open Anyway\"."
+elif [[ "$skip_notarize" -eq 0 ]]; then
   echo "Notarized and stapled; downloads open without a Gatekeeper warning."
 fi

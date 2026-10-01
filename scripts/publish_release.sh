@@ -4,7 +4,11 @@ set -euo pipefail
 # Packages a built "Slouch Goblin.app" and publishes it as a public GitHub
 # Release.  Usage:
 #
-#   ./scripts/publish_release.sh [path-to-.app] [--yes]
+#   ./scripts/publish_release.sh [path-to-.app] [--personal] [--yes]
+#
+# --personal publishes a self-signed, unnotarized build for the owner's own
+# use (see package_dmg.sh). The release notes say so and give the one-time
+# "Open Anyway" steps.
 #
 # The version comes from the bundle's Info.plist; bump app_version.py in the
 # source repository to cut a new one.
@@ -12,18 +16,20 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 repo_root="$PWD"
 
-repo="${SLOUCH_GOBLIN_REPO:-august-villagegames/slouch-goblin-app}"
+repo="${SLOUCH_GOBLIN_REPO:-augustcomstock/slouch-goblin-app}"
 assume_yes=0
+personal=0
 app_path=""
 
 for arg in "$@"; do
   case "$arg" in
     --yes|-y) assume_yes=1 ;;
+    --personal) personal=1 ;;
     *) app_path="$arg" ;;
   esac
 done
 
-app_path="${app_path:-${SLOUCH_GOBLIN_APP:-../hunch/dist/Slouch Goblin.app}}"
+app_path="${app_path:-${SLOUCH_GOBLIN_APP:-../slouch-goblin/dist/Slouch Goblin.app}}"
 
 if ! command -v gh >/dev/null 2>&1; then
   echo "The GitHub CLI (gh) is required to publish a release." >&2
@@ -49,7 +55,11 @@ if gh release view "$tag" --repo "$repo" >/dev/null 2>&1; then
   exit 2
 fi
 
-"$repo_root/scripts/package_dmg.sh" "$app_path"
+if [[ "$personal" -eq 1 ]]; then
+  "$repo_root/scripts/package_dmg.sh" "$app_path" --personal
+else
+  "$repo_root/scripts/package_dmg.sh" "$app_path"
+fi
 
 dmg_path="$repo_root/dist/Slouch-Goblin-$version-arm64.dmg"
 notes_file="$repo_root/notes/$tag.md"
@@ -57,6 +67,15 @@ notes_file="$repo_root/notes/$tag.md"
 if [[ ! -f "$notes_file" ]]; then
   echo "No release notes at notes/$tag.md; using the generic template." >&2
   notes_file="$(mktemp "${TMPDIR:-/tmp}/slouch-goblin-notes.XXXXXX")"
+  if [[ "$personal" -eq 1 ]]; then
+    cat > "$notes_file" <<EOF
+Slouch Goblin $version for Apple Silicon Macs running macOS 13 or later.
+
+**Personal build:** self-signed and not notarized by Apple. macOS blocks the
+first launch of each new version; open it once, then choose **Open Anyway** in
+System Settings > Privacy & Security.
+EOF
+  else
   cat > "$notes_file" <<EOF
 Slouch Goblin $version for Apple Silicon Macs running macOS 13 or later.
 
@@ -67,11 +86,12 @@ This build is signed and notarized by Apple, so it opens without any security
 warning. See [the install instructions](https://github.com/$repo#install) if
 anything is unclear.
 EOF
+  fi
 fi
 
 # Refuse to publish an unstapled image: it would look correct here and then
 # warn on every machine that downloads it.
-if ! xcrun stapler validate "$dmg_path" >/dev/null 2>&1; then
+if [[ "$personal" -eq 0 ]] && ! xcrun stapler validate "$dmg_path" >/dev/null 2>&1; then
   echo "Disk image has no stapled notarization ticket; refusing to publish." >&2
   echo "Re-run ./scripts/package_dmg.sh without --skip-notarize." >&2
   exit 1
@@ -83,7 +103,11 @@ echo "  repo:  $repo"
 echo "  tag:   $tag"
 echo "  asset: $(basename "$dmg_path") ($(du -h "$dmg_path" | cut -f1))"
 echo "  notes: $notes_file"
-echo "  state: signed, notarized, stapled"
+if [[ "$personal" -eq 1 ]]; then
+  echo "  state: PERSONAL build, self-signed, not notarized"
+else
+  echo "  state: signed, notarized, stapled"
+fi
 echo
 
 if [[ "$assume_yes" -ne 1 ]]; then

@@ -31,11 +31,12 @@ posture is universally correct.
 4. Allow camera access when macOS asks. Slouch Goblin cannot detect posture
    without it.
 
-Release 0.1.0 is signed with an Apple Developer ID and notarized by Apple, so it
-opens normally. Later releases are **personal builds**: self-signed and not
-notarized. For those, macOS blocks the first launch of each new version; choose
-**Done**, then open **System Settings → Privacy & Security** and click
-**Open Anyway** next to the Slouch Goblin message.
+Releases are signed with an Apple Developer ID and notarized by Apple, so they
+open normally.
+
+Release 0.1.1 was a self-signed personal build. If you are updating from it,
+macOS asks for camera access once more, and you may need to turn **Open at
+login** back on.
 
 ### Verifying your download
 

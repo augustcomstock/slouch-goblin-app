@@ -55,8 +55,10 @@ forward lean you want to be nudged about. After that it monitors quietly with
 no window open.
 
 The menu bar item shows the current status, a contextual action for whatever it
-is doing right now (open the window, pause, resume, retry the camera), and then:
+is doing right now (pause, resume, retry the camera), and then:
 
+- **Open Slouch Goblin** — show the live window
+- **Pause for 1 hour** — while it's watching; a pause never runs past midnight
 - **Recalibrate…** — redo the two-pose setup
 - **Open at login** — start Slouch Goblin automatically
 - **Check for updates** — turn the daily version check on or off
@@ -69,8 +71,12 @@ Clicking the Dock icon reopens the window.
 
 When you have been hunching for a while, the screen takes on a soft green blur,
 and a goblin turns up in the corner if you keep at it. A **Not hunching** button
-appears alongside the blur so you can flag a wrong alert; the video window has an
-**I'm hunching** button for the opposite case. Both are stored locally only.
+appears in the bottom-right corner so you can flag a wrong alert; the video
+window has an **I'm slouching** button for the opposite case. Both are stored
+locally only.
+
+Reminders hold while someone else is in frame, and come back a few seconds after
+it's just you again.
 
 If Zoom, Google Meet, QuickTime, or another app takes the camera, Slouch Goblin
 releases it and pauses, then resumes once the camera has been free for two

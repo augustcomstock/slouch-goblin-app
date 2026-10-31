@@ -1,5 +1,7 @@
 # Slouch Goblin
 
+![A goblin peers over the top of a MacBook screen at a man leaning in toward it. Headline: Someone has to tell you to sit up.](docs/images/slouch-goblin-hero.jpg)
+
 A private, real-time posture reminder for MacBooks. It lives in your menu bar,
 watches for forward lean through the built-in camera, and nudges you when you
 start hunching.
@@ -69,6 +71,8 @@ is doing right now (pause, resume, retry the camera), and then:
 
 Clicking the Dock icon reopens the window.
 
+![The Slouch Goblin window showing the Hunching status in front of a Mac screen with a soft green blur.](docs/images/slouch-goblin-blur.jpg)
+
 When you have been hunching for a while, the screen takes on a soft green blur,
 and a goblin turns up in the corner if you keep at it. A **Not hunching** button
 appears in the bottom-right corner so you can flag a wrong alert; the video
@@ -116,6 +120,8 @@ Gatekeeper accepts it, and writes a SHA-256 checksum.
 the one-time `xcrun notarytool store-credentials` setup it needs.
 
 Release notes come from `notes/v<version>.md`; see `notes/TEMPLATE.md`.
+
+Images used in this README live in `docs/images/`.
 
 ## License
 

@@ -15,6 +15,8 @@ from the menu.
 is not a medical diagnosis, an ergonomic certification, or a claim that one
 posture is universally correct.
 
+![The Slouch Goblin window showing the Hunching status in front of a Mac screen with a soft green blur.](docs/images/slouch-goblin-blur.jpg)
+
 ## Download
 
 **[Download the latest release](https://github.com/augustcomstock/slouch-goblin-app/releases/latest)**
@@ -70,8 +72,6 @@ is doing right now (pause, resume, retry the camera), and then:
 - **Quit Slouch Goblin**
 
 Clicking the Dock icon reopens the window.
-
-![The Slouch Goblin window showing the Hunching status in front of a Mac screen with a soft green blur.](docs/images/slouch-goblin-blur.jpg)
 
 When you have been hunching for a while, the screen takes on a soft green blur,
 and a goblin turns up in the corner if you keep at it. A **Not hunching** button

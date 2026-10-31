@@ -1,6 +1,6 @@
 # Slouch Goblin
 
-![A goblin peers over the top of a MacBook screen at a man leaning in toward it. Headline: Someone has to tell you to sit up.](docs/images/slouch-goblin-hero.jpg)
+![A goblin peers over the top of a MacBook screen at a man leaning in toward it. Headline: Someone has to tell you to sit up. Might as well be him.](docs/images/slouch-goblin-hero.jpg)
 
 A private, real-time posture reminder for MacBooks. It lives in your menu bar,
 watches for forward lean through the built-in camera, and nudges you when you
@@ -14,6 +14,8 @@ from the menu.
 `GOOD` means close to the comfortable upright reference you choose at setup. It
 is not a medical diagnosis, an ergonomic certification, or a claim that one
 posture is universally correct.
+
+![The Slouch Goblin window showing the Hunching status in front of a Mac screen with a soft green blur.](docs/images/slouch-goblin-blur.jpg)
 
 ## Download
 
@@ -70,8 +72,6 @@ is doing right now (pause, resume, retry the camera), and then:
 - **Quit Slouch Goblin**
 
 Clicking the Dock icon reopens the window.
-
-![The Slouch Goblin window showing the Hunching status in front of a Mac screen with a soft green blur.](docs/images/slouch-goblin-blur.jpg)
 
 When you have been hunching for a while, the screen takes on a soft green blur,
 and a goblin turns up in the corner if you keep at it. A **Not hunching** button

@@ -1,6 +1,6 @@
 # Slouch Goblin
 
-![A goblin peers over the top of a MacBook screen at a man leaning in toward it. Headline: Someone has to tell you to sit up.](docs/images/slouch-goblin-hero.jpg)
+![A goblin peers over the top of a MacBook screen at a man leaning in toward it. Headline: Someone has to tell you to sit up. Might as well be him.](docs/images/slouch-goblin-hero.jpg)
 
 A private, real-time posture reminder for MacBooks. It lives in your menu bar,
 watches for forward lean through the built-in camera, and nudges you when you

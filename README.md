@@ -66,16 +66,17 @@ is doing right now (pause, resume, retry the camera), and then:
 - **Recalibrate…** — redo the two-pose setup
 - **Open at login** — start Slouch Goblin automatically
 - **Check for updates** — turn the daily version check on or off
-- **Diagnostics…** — live detector values, with a button to copy them
+- **Diagnostics…** — live detector values, with buttons to copy them and show the log
 - **About Slouch Goblin** — version and build number
-- **Report an issue** — opens this repository's issue tracker
+- **Report an issue** — opens a new issue here, pre-filled with your app and macOS versions
 - **Quit Slouch Goblin**
 
 Clicking the Dock icon reopens the window.
 
 When you have been hunching for a while, the screen takes on a soft green blur,
 and a goblin turns up in the corner if you keep at it. A **Not hunching** button
-appears in the bottom-right corner so you can flag a wrong alert; the video
+appears in the bottom-right corner so you can flag a wrong alert, with a
+**Recalibrate** button above it for when your setup has changed; the video
 window has an **I'm slouching** button for the opposite case. Both are stored
 locally only.
 
